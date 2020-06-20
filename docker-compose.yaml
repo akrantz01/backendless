@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  database:
+    image: library/postgres:12-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    networks:
+      default:
+        ipv4_address: 172.128.64.2
+
+  redis:
+    image: library/redis:6-alpine
+    networks:
+      default:
+        ipv4_address: 172.128.64.3
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.128.64.0/29
