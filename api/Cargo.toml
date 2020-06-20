@@ -1,0 +1,41 @@
+[package]
+name = "backendless"
+version = "0.1.0"
+authors = ["Alex Krantz <alex@krantz.dev>"]
+edition = "2018"
+
+[dependencies]
+actix-web = "2.0"
+actix-multipart = "0.2"
+actix-rt = "1.0"
+actix-redis = { version = "0.8", features = ["web"] }
+actix-session = "0.3"
+actix-threadpool = "0.3"
+
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+
+diesel = { version = "1.4", features = ["chrono", "postgres", "r2d2", "serde_json", "uuid"] }
+diesel_migrations = "1.4"
+chrono = { version = "0.4", features = ["serde"] }
+r2d2 = "0.8"
+redis = "0.16"
+uuid = { version = "0.6", features = ["serde", "v4"] }
+
+config = "0.10"
+dotenv = "0.15"
+
+sentry = { version = "0.18", features = ["with_log"] }
+log = "0.4"
+env_logger = "0.7"
+pretty_env_logger = "0.4"
+
+rust-argon2 = "0.8"
+rand = "0.7"
+ring = "0.16"
+
+lazy_static = "1.4"
+regex = "1.3"
+hex = "0.4"
+futures = "0.3"

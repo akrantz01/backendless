@@ -1,0 +1,34 @@
+[database]
+# URI of the Postgres database
+url = "postgres://postgres:postgres@172.128.64.2:5432/postgres"
+
+[external]
+# Sentry (getsentry.com) DSN
+sentry = "https://cc408c3f23a64fd89a274f40c7c19b6b@o404685.ingest.sentry.io/5269158"
+
+[http]
+# Address to listen on
+address = "127.0.0.1:8080"
+# Base domain to use
+domain = "127.0.0.1"
+
+[http.session]
+# Name of the cookie
+name = "backendless-sid"
+# Max age of the session cookie in hours
+age = 168
+# Mark the cookie as secure (must be using TLS)
+secure = false
+# Key to secure the sessions
+key = "/LqY9Jy+rMK2oQqjm80PTOFr44Hvn7+9oPdYXoxX8SQ="
+
+
+[logger]
+# Whether to pretty print logs
+pretty = false
+# Minimum log level to display
+level = "debug"
+
+[redis]
+# Redis connection string
+address = "redis://172.128.64.3:6379"
