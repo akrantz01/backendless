@@ -3,3 +3,4 @@
 /.idea
 /backendless-*.json
 **/settings.toml
+**/__pycache__
