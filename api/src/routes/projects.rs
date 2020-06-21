@@ -1,10 +1,12 @@
 use super::utils;
 use crate::{
+    config::CFG,
     errors::ApiError,
     models::{Project, ProjectMessage},
 };
 use actix_session::Session;
 use actix_web::{delete, get, post, put, web, HttpResponse};
+use cloud_storage::Object;
 use regex::Regex;
 use uuid::Uuid;
 
@@ -81,6 +83,12 @@ async fn delete(id: web::Path<Uuid>, session: Session) -> Result<HttpResponse, A
     let project = Project::find(id.clone())?;
     if project.user_id == user_id {
         Project::delete(id.into_inner())?;
+
+        let files = web::block(move || Object::list_prefix(&CFG.gcp.bucket, &format!("{}/", &project.id))).await?;
+        for file in files {
+            web::block(move || Object::delete(&CFG.gcp.bucket, &file.name)).await?;
+        }
+
         Ok(utils::success())
     } else {
         Err(ApiError::new(
