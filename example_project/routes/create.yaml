@@ -1,0 +1,21 @@
+name: create
+query_parameters: []
+path_parameters: []
+headers: []
+body:
+  required:
+    - name
+  fields:
+    name:
+      type: string
+logic:
+  - action: db
+    operation: create
+    store: created_todo
+    collection: todos
+    data:
+      name: "{{body.name}}"
+      completed: false
+  - action: return
+    data_type: json
+    value: "{{created_todo}}"

@@ -1,0 +1,17 @@
+name: complete
+query_parameters: []
+path_parameters:
+  - id
+headers: []
+body: {}
+logic:
+  - action: db
+    operation: update
+    collection: todos
+    query: "{{path_parameters.id}}"
+    data:
+      completed: true
+  - action: return
+    data_type: json
+    value:
+      status: "success"

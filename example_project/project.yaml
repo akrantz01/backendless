@@ -1,0 +1,50 @@
+name: todos
+version: v1.0.0
+static_directory: "./static"
+
+routes:
+  - path: /
+    methods:
+      - GET
+    handler: list
+  - path: /
+    methods:
+      - POST
+    handler: create
+  - path: /{int:id}
+    methods:
+      - GET
+    handler: read
+  - path: /{int:id}
+    methods:
+      - DELETE
+    handler: delete
+  - path: /{int:id}
+    methods:
+      - PUT
+    handler: update
+  - path: /{int:id}/complete
+    methods:
+      - PUT
+    handler: complete
+
+handlers:
+  - name: list
+    query_parameters: []
+    path_parameters: []
+    headers: []
+    body: {}
+    logic:
+      - action: db
+        operation: find-many
+        store: todos
+        collection: todos
+        query: []
+      - action: return
+        type: json
+        value: "{{todos}}"
+  - $ref: ./routes/create.yaml
+  - $ref: ./routes/delete.yaml
+  - $ref: ./routes/read.yaml
+  - $ref: ./routes/update.yaml
+  - $ref: ./routes/complete.yaml

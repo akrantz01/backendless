@@ -1,0 +1,16 @@
+name: read
+query_parameters: []
+path_parameters:
+  - id
+headers: []
+body: {}
+logic:
+  - action: db
+    operation: find-one
+    collection: todos
+    store: todo
+    query:
+      _id: "{{path_parameters.id}}"
+  - action: return
+    data_type: json
+    value: "{{todo}}"

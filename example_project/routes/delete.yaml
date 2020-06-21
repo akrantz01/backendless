@@ -1,0 +1,16 @@
+name: delete
+query_parameters: []
+path_parameters:
+  - id
+headers: []
+body: {}
+logic:
+  - action: db
+    operation: delete
+    collection: todos
+    query:
+      _id: "{{path_parameters.id}}"
+  - action: return
+    data_type: json
+    value:
+      status: "success"

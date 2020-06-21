@@ -1,0 +1,370 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://backendless.tech/schema.json",
+  "title": "Project Schema Definition",
+  "description": "The definition of an API for Backendless",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the project"
+    },
+    "version": {
+      "type": "string",
+      "description": "The semantic version string for the current iteration of the project"
+    },
+    "static": {
+      "type": "string",
+      "description": "The directory where all static files are located"
+    },
+    "routes": {
+      "type": "array",
+      "description": "All the route definitions for a given project",
+      "items": {
+        "type": "object",
+        "description": "The request conditions for which a specific handler should be triggered",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "The path requirements for when the handler should be triggered. This can contain path parameters if necessary."
+          },
+          "methods": {
+            "type": "array",
+            "description": "The method requirements for when the handler should be triggered.",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "handler": {
+            "type": "string",
+            "description": "The handler that should be triggered when the route is matched"
+          }
+        },
+        "required": ["path", "methods", "handler"]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "handlers": {
+      "type": "array",
+      "description": "The handlers for the defined routes",
+      "items": {
+        "type": "object",
+        "description": "The operations a handler should run when triggered",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the handler. This should match the one defined in the routes"
+          },
+          "query_parameters": {
+            "type": "array",
+            "description": "Query parameters to accept with the request",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "headers": {
+            "type": "array",
+            "description": "Headers to accept with the request",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "path_parameters": {
+            "type": "array",
+            "description": "Path parameters to accept with the request. These must be present in the path definition to be stored.",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "body": {
+            "type": "object",
+            "description": "The parameters in the request body to accept",
+            "properties": {
+              "required": {
+                "type": "array",
+                "description": "The fields in the body that are required",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fields": {
+                "type": "object",
+                "description": "The fields of the body. This should be JSON schema which the body will be validated against"
+              }
+            }
+          },
+          "logic": {
+            "type": "array",
+            "description": "The logic for the request",
+            "$ref": "#/definitions/command"
+          }
+        },
+        "required": ["name", "logic"]
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["name", "routes", "handlers"],
+  "definitions": {
+    "any_type": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "array"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "command": {
+      "items": {
+        "type": "object",
+        "description": "An operation to execute",
+        "oneOf": [
+          { "$ref": "#/definitions/return" },
+          { "$ref": "#/definitions/math" },
+          { "$ref": "#/definitions/db" },
+          { "$ref": "#/definitions/static" },
+          { "$ref": "#/definitions/generator" },
+          { "$ref": "#/definitions/if" },
+          { "$ref": "#/definitions/coerce" }
+        ]
+      }
+    },
+    "return": {
+      "description": "Return some value to the requester",
+      "required": ["action", "value", "data_type"],
+      "properties": {
+        "action": {
+          "const": "return"
+        },
+        "data_type": {
+          "type": "string",
+          "enum": [ "json", "text" ],
+          "description": "The format of data to return"
+        },
+        "status": {
+          "type": "number",
+          "description": "The status code to return"
+        },
+        "value": {
+          "description": "The data to return to the requester",
+          "$ref": "#/definitions/any_type"
+        }
+      }
+    },
+    "math": {
+      "description": "Do mathematical operations",
+      "required": ["action", "operation", "a", "b"],
+      "properties": {
+        "action": {
+          "const": "math"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [ "add", "subtract", "multiply", "divide" ],
+          "description": "The operation to apply"
+        },
+        "a": {
+          "type": "number",
+          "description": "The number on the left-hand side"
+        },
+        "b": {
+          "type": "number",
+          "description": "The number on the right-hand side"
+        },
+        "store": {
+          "type": "string",
+          "description": "The variable to store the resulting value in"
+        }
+      }
+    },
+    "db": {
+      "description": "Interact with a document database",
+      "properties": {
+        "action": {
+          "const": "db"
+        },
+        "operation": {
+          "type": "string",
+          "enum": [ "create", "find-one", "find-many", "update", "delete" ],
+          "description": "The operation to run against the database"
+        },
+        "store": {
+          "type": "string",
+          "description": "The variable to store the resulting value in"
+        },
+        "collection": {
+          "type": "string",
+          "description": "The name of the collection to store documents in"
+        },
+        "data": {
+          "description": "The data to add to a document",
+          "$ref": "#/definitions/any_type"
+        },
+        "query": {
+          "oneOf": [
+            {
+              "type": "array",
+              "description": "The values to query against for a document",
+              "items": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "string",
+                  "description": "One of the parts of a filter"
+                }
+              }
+            },
+            {
+              "type": "string",
+              "description": "The id or replacement string for an entity"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "operation": { "const": "create" } }
+          },
+          "then": {
+            "required": [ "action", "operation", "collection", "data" ]
+          }
+        },
+        {
+          "if": {
+            "properties": { "operation": { "const": "find-one" } }
+          },
+          "then": {
+            "required": [ "action", "operation", "collection", "query" ]
+          }
+        },
+        {
+          "if": {
+            "properties": { "operation": { "const": "find-many" } }
+          },
+          "then": {
+            "required": [ "action", "operation", "collection", "query" ]
+          }
+        },
+        {
+          "if": {
+            "properties": { "operation": { "const": "update" } }
+          },
+          "then": {
+            "required": [ "action", "operation", "collection", "query", "data" ]
+          }
+        },
+        {
+          "if": {
+            "properties": { "operation": { "const": "delete" } }
+          },
+          "then": {
+            "required": [ "action", "operation", "collection", "query" ]
+          }
+        }
+      ]
+    },
+    "static": {
+      "description": "Returns a static file to the requester",
+      "required": ["action", "file"],
+      "properties": {
+        "action": {
+          "const": "static"
+        },
+        "file": {
+          "type": "string",
+          "description": "The file to serve to the requester"
+        }
+      }
+    },
+    "generator": {
+      "description": "Generate a value and store it",
+      "required": ["action", "type", "store"],
+      "properties": {
+        "action": {
+          "const": "generator"
+        },
+        "data_type": {
+          "type": "string",
+          "description": "The type of value to generate",
+          "enum": [ "uuid", "number", "string" ]
+        },
+        "store": {
+          "type": "string",
+          "description": "The variable to store the value in"
+        }
+      }
+    },
+    "if": {
+      "description": "Conditional statement to evaluate",
+      "required": ["action", "conditional", "true"],
+      "properties": {
+        "action": {
+          "const": "if"
+        },
+        "conditional": {
+          "type": "string",
+          "description": "The boolean condition to validate against"
+        },
+        "true": {
+          "type": "array",
+          "description": "Statements to execute if true",
+          "items": {
+            "$ref": "#/definitions/command"
+          },
+          "minItems": 1
+        },
+        "false": {
+          "type": "array",
+          "description": "Statements to execute if false",
+          "items": {
+            "$ref": "#/definitions/command"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "coerce": {
+      "description": "Do type coercion from a string to something else",
+      "required": ["action", "type", "store"],
+      "properties": {
+        "action": {
+          "const": "coerce"
+        },
+        "data_type": {
+          "type": "string",
+          "enum": [ "boolean", "integer", "float" ],
+          "description": "The type to coerce the string to"
+        },
+        "store": {
+          "type": "string",
+          "description": "The variable to store the new value in"
+        }
+      }
+    }
+  }
+}

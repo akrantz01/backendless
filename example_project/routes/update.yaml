@@ -1,0 +1,26 @@
+name: update
+query_parameters: []
+path_parameters:
+  - id
+headers: []
+body:
+  required:
+    - name
+    - completed
+  fields:
+    name:
+      type: string
+    completed:
+      type: boolean
+logic:
+  - action: db
+    operation: update
+    collection: todos
+    query: "{{path_parameters.id}}"
+    data:
+      name: "{{body.name}}"
+      complete: "{{body.completed}}"
+  - action: return
+    data_type: json
+    value:
+      status: "success"
