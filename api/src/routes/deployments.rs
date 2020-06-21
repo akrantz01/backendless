@@ -10,6 +10,7 @@ use actix_session::Session;
 use actix_web::{delete, get, post, put, web, HttpResponse};
 use cloud_storage::Object;
 use futures::{StreamExt, TryStreamExt};
+use redis::Commands;
 use ring::digest;
 use serde::{Deserialize, Serialize};
 use std::io::{Cursor, Read};
@@ -161,7 +162,8 @@ async fn add_static(
 
     deployment.mark_has_static()?;
 
-    // TODO: dispatch service deployment request
+    let mut connection = crate::redis::connection()?;
+    let _n: i32 = connection.publish("publish", project.id.to_string()).unwrap();
 
     Ok(utils::success())
 }
@@ -228,7 +230,8 @@ async fn delete(ids: web::Path<(Uuid, Uuid)>, session: Session) -> Result<HttpRe
 
     Deployment::delete(deployment.id)?;
 
-    // TODO: dispatch service removal request
+    let mut connection = crate::redis::connection()?;
+    let _n: i32 = connection.publish("delete", project.id.to_string()).unwrap();
 
     Ok(utils::success())
 }
