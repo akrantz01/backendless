@@ -2,3 +2,4 @@
 /runtime/venv
 /.idea
 /backendless-*.json
+**/settings.toml
