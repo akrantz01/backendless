@@ -35,6 +35,11 @@ rust-argon2 = "0.8"
 rand = "0.7"
 ring = "0.16"
 
+cloud-storage = { git = "https://github.com/akrantz01/cloud-storage-rs" }
+zip = "0.5"
+mime = "0.3"
+mime_guess = "2.0"
+
 lazy_static = "1.4"
 regex = "1.3"
 hex = "0.4"

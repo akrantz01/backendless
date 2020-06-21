@@ -22,6 +22,8 @@ secure = false
 # Key to secure the sessions
 key = "/LqY9Jy+rMK2oQqjm80PTOFr44Hvn7+9oPdYXoxX8SQ="
 
+[gcp]
+bucket = "backendless-user-files"
 
 [logger]
 # Whether to pretty print logs

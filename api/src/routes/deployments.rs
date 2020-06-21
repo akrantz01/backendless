@@ -1,5 +1,6 @@
 use super::utils;
 use crate::{
+    config::CFG,
     errors::ApiError,
     models::{Deployment, Handler, Project, Route},
     project_format::ProjectFormat,
@@ -7,11 +8,14 @@ use crate::{
 use actix_multipart::{Field, Multipart};
 use actix_session::Session;
 use actix_web::{delete, get, post, put, web, HttpResponse};
+use cloud_storage::Object;
 use futures::{StreamExt, TryStreamExt};
 use ring::digest;
 use serde::{Deserialize, Serialize};
-use std::io::Write;
+use std::io::{Cursor, Read};
+use std::path::PathBuf;
 use uuid::Uuid;
+use zip::ZipArchive;
 
 #[get("/projects/{id}/deployments")]
 async fn list(id: web::Path<Uuid>, session: Session) -> Result<HttpResponse, ApiError> {
@@ -129,14 +133,30 @@ async fn add_static(
         ));
     }
 
-    let filepath = format!("./uploads/{}_{}.zip", project.id, deployment.id);
-    let mut f = web::block(|| std::fs::File::create(filepath))
-        .await
-        .unwrap();
-
+    let mut raw: Vec<u8> = Vec::new();
     while let Some(chunk) = static_files.next().await {
         let data = chunk.unwrap();
-        f = web::block(move || f.write_all(&data).map(|_| f)).await?;
+        raw.extend_from_slice(data.as_ref());
+    }
+
+    let buffer = Cursor::new(raw);
+    let mut archive = ZipArchive::new(buffer).map_err(|_| ApiError::new(400, "invalid zip archive format".to_string()))?;
+
+    for i in 0..archive.len() {
+        let mut file = archive.by_index(i).unwrap();
+        let name = file.sanitized_name().as_path().display().to_string();
+
+        let mut path = PathBuf::new();
+        path.push(project.id.to_string());
+        path.push(&name);
+
+        let mut data = Vec::new();
+        file.read_to_end(&mut data)?;
+
+        let guess = mime_guess::from_path(&name);
+        let mime = guess.first_or(mime::APPLICATION_OCTET_STREAM);
+
+        web::block(move || Object::create(&CFG.gcp.bucket, data.as_ref(), path.to_str().unwrap(), &mime.to_string())).await?;
     }
 
     deployment.mark_has_static()?;

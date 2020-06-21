@@ -2,6 +2,7 @@ use actix_threadpool::BlockingError;
 use actix_web::error::{Error as ActixError, ParseError};
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
+use cloud_storage::Error as CloudStorageError;
 use diesel::result::{DatabaseErrorKind, Error as DieselError};
 use serde::Deserialize;
 use std::{fmt, io::Error as IoError};
@@ -71,6 +72,12 @@ impl From<ParseError> for ApiError {
     }
 }
 
+impl From<IoError> for ApiError {
+    fn from(error: IoError) -> ApiError {
+        ApiError::new(500, format!("failed to copy file to vector: {}", error))
+    }
+}
+
 impl From<BlockingError<IoError>> for ApiError {
     fn from(error: BlockingError<IoError>) -> ApiError {
         match error {
@@ -80,6 +87,15 @@ impl From<BlockingError<IoError>> for ApiError {
             BlockingError::Canceled => {
                 ApiError::new(500, "writing operation cancelled".to_string())
             }
+        }
+    }
+}
+
+impl From<BlockingError<CloudStorageError>> for ApiError {
+    fn from(error: BlockingError<CloudStorageError>) -> ApiError {
+        match error {
+            BlockingError::Canceled => ApiError::new(500, "upload operation was cancelled".to_string()),
+            BlockingError::Error(e) => ApiError::new(500, format!("failed to upload object to google cloud storage: {}", e))
         }
     }
 }

@@ -16,6 +16,11 @@ pub struct External {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+pub struct Gcp {
+    pub bucket: String,
+}
+
+#[derive(Clone, Debug, Deserialize)]
 pub struct Http {
     pub address: String,
     pub domain: String,
@@ -45,9 +50,10 @@ pub struct Session {
 pub struct Settings {
     pub database: Database,
     pub external: External,
-    pub redis: Redis,
+    pub gcp: Gcp,
     pub http: Http,
     pub logger: Logger,
+    pub redis: Redis,
 }
 
 impl Settings {

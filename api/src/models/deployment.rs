@@ -7,7 +7,6 @@ use crate::{
     schema::deployments,
 };
 use chrono::{NaiveDateTime, Utc};
-use diesel::pg::Pg;
 use diesel::prelude::*;
 use diesel::result::Error as DieselError;
 use serde::{Deserialize, Serialize};
@@ -94,10 +93,8 @@ impl Deployment {
     pub fn mark_has_static(&self) -> Result<usize, ApiError> {
         let conn = database::connection()?;
 
-        let deployment = diesel::update(self).set(deployments::has_static.eq(true));
-        println!("{}", diesel::debug_query::<Pg, _>(&deployment));
-
-        Ok(deployment.execute(&conn)?)
+        let res = diesel::update(self).set(deployments::has_static.eq(true)).execute(&conn)?;
+        Ok(res)
     }
 
     /// Add a handler to the deployment
