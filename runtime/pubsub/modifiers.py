@@ -17,6 +17,7 @@ async def publish_deployment(app, uuid):
     deployment = await Deployment.find(uuid, db)
     handlers = await deployment.handlers
     routes = await deployment.routes
+    project = await deployment.project
 
     # Generate handlers
     handlers_by_name = {}
@@ -33,7 +34,7 @@ async def publish_deployment(app, uuid):
         # Generate route
         name = generate_name(route.id, deployment.id)
         r = Route(
-            f"/{deployment.version}{route.path}",
+            f"/{project.name}/{deployment.version}{route.path}",
             endpoint=h,
             methods=route.methods,
             name=name

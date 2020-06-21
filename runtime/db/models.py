@@ -1,4 +1,4 @@
-from .tables import deployments, handlers, routes
+from .tables import deployments, handlers, projects, routes
 
 
 class Deployment(object):
@@ -44,6 +44,17 @@ class Deployment(object):
         query = handlers.select().where(handlers.c.deployment_id == self.id)
         records = await self.__db.fetch_all(query=query)
         return [Handler(record) for record in records]
+
+    @property
+    async def project(self):
+        """
+        Retrieve associated project with the deployment
+
+        :return: associated project
+        """
+        query = projects.select().where(projects.c.id == self.project_id)
+        record = await self.__db.fetch_one(query=query)
+        return Project(record)
 
     @classmethod
     async def find(cls, deployment_id, db):
@@ -107,6 +118,27 @@ class Handler(object):
 
     def __str__(self):
         return f"<Handler id={self.id} deployment_id={self.deployment_id} name={self.name}>"
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class Project(object):
+    """
+    Representation of a project in the database
+
+    :param record: a record found in the database
+    """
+    def __init__(self, record):
+        self.id = record.get("id")
+        self.user_id = record.get("user_id")
+        self.name = record.get("name")
+        self.description = record.get("description")
+        self.created_at = record.get("created_at")
+        self.updated_at = record.get("updated_at")
+
+    def __str__(self):
+        return f"<Project id={self.id} user_id={self.user_id} name={self.name}>"
 
     def __repr__(self):
         return self.__str__()

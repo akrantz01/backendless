@@ -4,6 +4,18 @@ import uuid
 
 metadata = sqlalchemy.MetaData()
 
+# Projects table
+projects = sqlalchemy.Table(
+    "projects",
+    metadata,
+    sqlalchemy.Column("id", postgresql.UUID, primary_key=True, default=uuid.uuid4(), unique=True, nullable=False),
+    sqlalchemy.Column("user_id", postgresql.UUID, nullable=False),
+    sqlalchemy.Column("name", sqlalchemy.String, nullable=False),
+    sqlalchemy.Column("description", sqlalchemy.Text, nullable=False),
+    sqlalchemy.Column("created_at", sqlalchemy.DateTime, nullable=False),
+    sqlalchemy.Column("updated_at", sqlalchemy.DateTime)
+)
+
 # Deployments table
 deployments = sqlalchemy.Table(
     "deployments",

@@ -13,6 +13,7 @@ def load_routes(app, db):
         for deployment in deployments:
             handlers = await deployment.handlers
             routes = await deployment.routes
+            project = await deployment.project
 
             handlers_by_name = {}
             for handler in handlers:
@@ -25,7 +26,7 @@ def load_routes(app, db):
 
                 name = generate_name(route.id, deployment.id)
                 r = Route(
-                    f"/{deployment.version}{route.path}",
+                    f"/{project.name}/{deployment.version}{route.path}",
                     endpoint=h,
                     methods=route.methods,
                     name=name
