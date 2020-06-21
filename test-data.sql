@@ -1,0 +1,20 @@
+-- Base Information
+INSERT INTO users VALUES ('baadd997-2859-4c4d-ae81-3347fc22d2c6'::uuid, 'alex@krantz.dev', 'akrantz01', '$argon2id$v=19$m=4096,t=3,p=1$NCf63nIor4Z2vAD0//4rLo1yo7W+nARDcvEJt6icz48$iE5UXfDwg6y5zDPzyuW8xKddfbiRH5G/lNjISTRo70Y', current_timestamp);
+INSERT INTO projects VALUES ('549599ac-f286-4a72-8c97-c5644cfa6cd4'::uuid, 'baadd997-2859-4c4d-ae81-3347fc22d2c6'::uuid, 'todos-api', 'A sample todos project', current_timestamp, null);
+INSERT INTO deployments VALUES ('09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, '549599ac-f286-4a72-8c97-c5644cfa6cd4'::uuid, 'v1.0.0', '478de6eece1272d1111e72068b9e121dfff9209c28524b4691a7b2a6fa670c28', true, current_timestamp);
+
+-- Routes
+INSERT INTO public.routes VALUES ('b1aefe9e-def0-45d1-b29c-753bc3608d91'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, '/', '{GET}', 'list');
+INSERT INTO public.routes VALUES ('e499af5a-18c6-46d5-8d60-2fa9f3620887'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, '/', '{POST}', 'create');
+INSERT INTO public.routes VALUES ('0b01e169-1ec9-4308-93c1-8168864e7f63'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, '/{id:int}', '{DELETE}', 'delete');
+INSERT INTO public.routes VALUES ('364462f3-4261-4023-9912-6a490eb63c22'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, '/{id:int}', '{PUT}', 'update');
+INSERT INTO public.routes VALUES ('f95f9185-aacf-4e36-9805-54ced47708ab'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, '/{id:int}', '{GET}', 'read');
+INSERT INTO public.routes VALUES ('6742ce6e-904f-4537-9e93-f0955f16cabb'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, '/{id:int}/complete', '{PUT}', 'complete');
+
+-- Handlers
+INSERT INTO public.handlers VALUES ('bef9ebe2-6374-4ff8-850d-a02bd48a6b26'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, 'complete', null, null, '{id}', '{}', '[{"data": {"complete": true}, "query": {"_id": "{{path_parameters.id}}"}, "action": "db", "replace": false, "operation": "update", "collection": "todos"}, {"value": {"status": "success"}, "action": "return", "data_type": "json"}]');
+INSERT INTO public.handlers VALUES ('2384e471-29eb-4cd3-9465-d53675ba8866'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, 'update', null, null, '{id}', '{"fields": {"name": {"type": "string"}, "complete": {"type": "boolean"}}, "required": true}', '[{"data": {"name": "{{body.name}}", "complete": "{{body.complete}}"}, "query": {"_id": "{{path_parameters.id}}"}, "action": "db", "replace": false, "operation": "update", "collection": "todos"}, {"value": {"status": "success"}, "action": "return", "data_type": "json"}]');
+INSERT INTO public.handlers VALUES ('779db76c-eb05-4d8c-ac8b-ea21518f0038'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, 'read', null, null, '{id}', '{}', '[{"query": {"_id": "{{path_parameters.id}}"}, "store": "todo", "action": "db", "operation": "find-one", "collection": "todos"}, {"value": "{{todo}}", "action": "return", "data_type": "json"}]');
+INSERT INTO public.handlers VALUES ('15adbd94-941e-46df-ae2c-7ad44649f7d3'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, 'list', null, null, null, '{}', '[{"query": {}, "store": "todos", "action": "db", "operation": "find-many", "collection": "todos"}, {"value": "{{todos}}", "action": "return", "data_type": "json"}]');
+INSERT INTO public.handlers VALUES ('dfb81552-d7a3-49b0-9e17-b7243720257e'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, 'create', null, null, null, '{"fields": {"name": {"type": "string"}}, "required": true}', '[{"data": {"name": "{{body.name}}", "complete": false}, "store": "created_todo", "action": "db", "operation": "create", "collection": "todos"}, {"value": "{{created_todo}}", "action": "return", "data_type": "json"}]');
+INSERT INTO public.handlers VALUES ('4560e841-ddef-4fc2-9cb9-bc6b25a2db4d'::uuid, '09bcc541-f043-4b1f-95b5-7ce5c27b90f2'::uuid, 'delete', null, null, '{id}', '{}', '[{"query": {"_id": "{{path_parameters.id}}"}, "action": "db", "operation": "delete", "collection": "todos"}, {"value": {"status": "success"}, "action": "return", "data_type": "json"}]');
