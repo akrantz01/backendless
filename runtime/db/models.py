@@ -57,6 +57,17 @@ class Deployment(object):
         record = await db.fetch_one(query=query)
         return cls(record, db)
 
+    @classmethod
+    async def all(cls, db):
+        """
+        Find all deployments in the database
+
+        :param db: a database connection object
+        """
+        query = deployments.select()
+        records = await db.fetch_all(query=query)
+        return [cls(record, db) for record in records]
+
 
 class Route(object):
     """

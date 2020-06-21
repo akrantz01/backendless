@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse
 import uvicorn
 
 from config import Config
+import loader
 import pubsub
 
 load_dotenv()
@@ -37,6 +38,9 @@ app = Starlette(
 # Add redis configuration to startup and shutdown
 app.router.on_startup.append(pubsub.configure(app, cfg.redis))
 app.router.on_shutdown.append(pubsub.shutdown(app))
+
+# Load initial routes
+app.router.on_startup.append(loader.load_routes(app, database))
 
 # Attach services to state
 app.state.database = database
