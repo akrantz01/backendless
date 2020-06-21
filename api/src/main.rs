@@ -10,6 +10,7 @@ extern crate log;
 extern crate serde_json;
 
 use crate::config::CFG;
+use actix_cors::Cors;
 use actix_redis::RedisSession;
 use actix_web::{middleware, App, HttpServer};
 use std::str::FromStr;
@@ -41,6 +42,11 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::new(LOG_FORMAT))
             .wrap(middleware::NormalizePath)
             .wrap(middleware::Compress::default())
+            .wrap(Cors::new()
+                .allowed_origin("https://backendless.tech")
+                .allowed_origin("http://localhost:3000")
+                .supports_credentials()
+                .finish())
             .wrap(configure_session())
             .configure(routes::authentication)
             .configure(routes::users)
