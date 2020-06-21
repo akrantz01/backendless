@@ -4,3 +4,4 @@
 /backendless-*.json
 **/settings.toml
 **/__pycache__
+/certificates
