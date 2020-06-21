@@ -8,14 +8,18 @@ RUN pip wheel -r requirements.txt
 
 FROM python:3.8-alpine
 
-# Copy required files
-COPY . ./
-
 # Install built wheels
 RUN apk add postgresql-dev
 COPY --from=wheels /*.whl /
 RUN pip install *.whl && rm -rf *.whl
 
+# Define environment variables
+ENV HOST 0.0.0.0
+ENV PORT 9090
+
+# Copy required files
+COPY . ./
+
 # Run the service
 USER 1000
-CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:9090", "main:app"]
+CMD gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b ${HOST}:${PORT} main:app
