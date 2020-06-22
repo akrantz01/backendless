@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Backendless</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        .container {
+            max-width: 960px;
+        }
+
+        /*
+         * Custom translucent site header
+         */
+
+        .site-header {
+            background-color: rgba(0, 0, 0, .85);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            backdrop-filter: saturate(180%) blur(20px);
+        }
+        .site-header a {
+            color: #999;
+            transition: ease-in-out color .15s;
+        }
+        .site-header a:hover {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /*
+         * Dummy devices (replace them with your own or something else entirely!)
+         */
+
+        .product-device {
+            position: absolute;
+            right: 10%;
+            bottom: -30%;
+            width: 300px;
+            height: 540px;
+            background-color: #333;
+            border-radius: 21px;
+            -webkit-transform: rotate(30deg);
+            transform: rotate(30deg);
+        }
+
+        .product-device::before {
+            position: absolute;
+            top: 10%;
+            right: 10px;
+            bottom: 10%;
+            left: 10px;
+            content: "";
+            background-color: rgba(255, 255, 255, .1);
+            border-radius: 5px;
+        }
+
+        .product-device-2 {
+            top: -25%;
+            right: auto;
+            bottom: 0;
+            left: 5%;
+            background-color: #e5e5e5;
+        }
+
+
+        /*
+         * Extra utilities
+         */
+
+        .flex-equal > * {
+            -ms-flex: 1;
+            flex: 1;
+        }
+        @media (min-width: 768px) {
+            .flex-md-equal > * {
+                -ms-flex: 1;
+                flex: 1;
+            }
+        }
+
+        .overflow-hidden { overflow: hidden; }
+    </style>
+</head>
+<body>
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
+        <div class="col-md-5 p-lg-5 mx-auto my-5">
+            <h1 class="display-4 font-weight-normal">Backendless</h1>
+            <p class="lead font-weight-normal">We handle your backend so you can focus on your frontend</p>
+            <a class="btn btn-outline-secondary" href="https://github.com/akrantz01/backendless">Get Started</a>
+        </div>
+        <div class="product-device shadow-sm d-none d-md-block"></div>
+        <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+    </div>
+
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
+        <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+            <div class="my-3 py-3">
+                <h2 class="display-5">Configure, Done.</h2>
+                <p class="lead">Write your entire backend as a configuration file</p>
+            </div>
+            <img src="assets/sample-configuration.png" alt="sample configuration" style="width: 80%; border-radius: 21px 21px 0 0;"/>
+        </div>
+        <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+            <div class="my-3 p-3">
+                <h2 class="display-5">Develop Quickly</h2>
+                <p class="lead">Using a simple and intuitive command line interface</p>
+            </div>
+            <img src="assets/workflow.png" alt="example workflow" style="width: 80%; border-radius: 21px 21px 0 0;"/>
+        </div>
+    </div>
+
+    <footer class="container py-5">
+        <div class="row">
+            <div class="col-6 col-md">
+                <h5>About</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="https://devpost.com/software/backendless">DevPost</a></li>
+                    <li><a class="text-muted" target="_blank" href="https://github.com/akrantz01/backendless">GitHub</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5>Contact</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" target="_blank" href="mailto:alex@krantz.dev">Alex Krantz</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
