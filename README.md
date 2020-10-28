@@ -1,6 +1,11 @@
 # [Backendless](https://devpost.com/software/backendless)
 ###### By Alex Krantz
 
+## Important Note:
+I am currently working on improving this and bringing it to a proper service under a new name.
+My goal is to finish it before the new year.
+It may be a big stretch, especially since many parts have to be rewritten from messy hackathon code.
+
 ## Introduction
 It is an indisputable fact that every web, mobile, or desktop application requires a backend, whether it is a custom one or a 3rd party's API. The backend provides data persistence, data processing, file storage, authentication, and more. With all these requirements for a backend, it is no wonder backends are so complicated to build, deploy, and maintain. As development speed is getting progressively more important, your team needs to be able to move as fast as possible to get your product to market.
 
